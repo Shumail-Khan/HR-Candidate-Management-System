@@ -19,7 +19,13 @@ const User = sequelize.define("User", {
         type: DataTypes.ENUM("admin", "hr", "applicant"),
         allowNull: false,
         defaultValue: "applicant"
+    },
+
+    isActive: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
     }
+
 });
 
 export default User;

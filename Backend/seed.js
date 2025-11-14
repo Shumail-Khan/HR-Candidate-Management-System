@@ -1,31 +1,27 @@
-import axios from "axios";
+import bcrypt from "bcryptjs";
+import User from "./models/User.js";
+import dotenv from "dotenv";
 
-const users = [
-  { email: "hr1@example.com", password: "12345" },
-  { email: "hr2@example.com", password: "12345" },
-];
+dotenv.config();
 
-const seedUsers = async () => {
-  try {
-    for (const u of users) {
-      try {
-        const res = await axios.post("http://localhost:5000/api/auth/signup", u);
-        console.log(`Seeded user: ${res.data.user.email}`);
-      } catch (err) {
-        if (err.response) {
-          console.log(`Could not seed ${u.email}: ${err.response.data.message}`);
-        } else {
-          console.log(`Error seeding ${u.email}: ${err.message}`);
-        }
-      }
-    }
+const seedAdmin = async () => {
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
 
-    console.log("Seeding complete!");
-    process.exit(0);
-  } catch (err) {
-    console.error("Error in seeding script:", err);
-    process.exit(1);
+  if (!email || !password) {
+    console.error("ADMIN_EMAIL or ADMIN_PASSWORD missing in .env");
+    return;
   }
+
+  const hashed = await bcrypt.hash(password, 10);
+
+  const [admin, created] = await User.findOrCreate({
+    where: { email },
+    defaults: { password: hashed, role: "admin", isActive: true },
+  });
+
+  if (created) console.log("Admin seeded:", email);
+  else console.log("Admin already exists:", email);
 };
 
-seedUsers();
+seedAdmin();
