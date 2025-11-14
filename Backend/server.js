@@ -1,10 +1,18 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { initDb } from "./config/db.js";
+import sequelize, { initDb } from "./config/db.js";
+
+// Routes
 import authRoutes from "./routes/authRoutes.js";
 import candidateRoutes from "./routes/candidateRoutes.js";
+
+// Models
 import User from "./models/User.js";
+import "./models/User.js";
+import "./models/ApplicantProfile.js";
+import "./models/Opportunity.js";
+import "./models/Application.js";
 import Candidate from "./models/Candidate.js";
 
 dotenv.config();
@@ -22,8 +30,7 @@ const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   await initDb();           // Create DB if missing + connect
-  await User.sync({ alter: true });
-  await Candidate.sync({ alter: true });
+  await sequelize.sync({ alter: true }); // Sync all models
 
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 };
