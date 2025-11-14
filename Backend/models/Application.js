@@ -4,16 +4,17 @@ import User from "./User.js";
 import Opportunity from "./Opportunity.js";
 
 const Application = sequelize.define("Application", {
-  id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
 
-  status: {
-    type: DataTypes.ENUM("pending", "reviewing", "selected", "rejected"),
-    defaultValue: "pending",
-  },
+    status: {
+        type: DataTypes.ENUM("pending", "reviewing", "selected", "rejected"),
+        defaultValue: "pending"
+    },
 
-  hrRemarks: { type: DataTypes.TEXT },
+    hrRemarks: DataTypes.TEXT
 });
 
+// Relations
 User.hasMany(Application, { foreignKey: "applicantId" });
 Application.belongsTo(User, { foreignKey: "applicantId" });
 
