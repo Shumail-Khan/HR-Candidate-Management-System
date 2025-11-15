@@ -6,6 +6,7 @@ import sequelize, { initDb } from "./config/db.js";
 // Routes
 import authRoutes from "./routes/authRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import hrRoutes from "./routes/hrRoutes.js";
 
 // Models
 import "./models/User.js";
@@ -23,6 +24,7 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/hr", hrRoutes);
 
 // Start server after DB init
 const PORT = process.env.PORT || 5000;

@@ -11,14 +11,14 @@ const Application = sequelize.define("Application", {
         defaultValue: "pending"
     },
 
-    hrRemarks: DataTypes.TEXT
+    hrRemarks: {
+        type: DataTypes.STRING,
+        allowNull: true
+    }
 });
 
 // Relations
-User.hasMany(Application, { foreignKey: "applicantId" });
-Application.belongsTo(User, { foreignKey: "applicantId" });
-
-Opportunity.hasMany(Application, { foreignKey: "opportunityId" });
-Application.belongsTo(Opportunity, { foreignKey: "opportunityId" });
+Application.belongsTo(User, { as: "applicant", foreignKey: "applicantId" });
+Application.belongsTo(Opportunity, { as: "opportunity", foreignKey: "opportunityId" });
 
 export default Application;
