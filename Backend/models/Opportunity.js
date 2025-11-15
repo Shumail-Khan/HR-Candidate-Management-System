@@ -12,7 +12,8 @@ const Opportunity = sequelize.define("Opportunity", {
     status: {
         type: DataTypes.ENUM("open", "closed"),
         defaultValue: "open"
-    }
+    },
+    isDeleted: { defaultValue: false }
 });
 
 export default Opportunity;
