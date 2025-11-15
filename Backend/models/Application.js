@@ -1,7 +1,5 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/db.js";
-import User from "./User.js";
-import Opportunity from "./Opportunity.js";
 
 const Application = sequelize.define("Application", {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
@@ -16,9 +14,5 @@ const Application = sequelize.define("Application", {
         allowNull: true
     }
 });
-
-// Relations
-Application.belongsTo(User, { as: "applicant", foreignKey: "applicantId" });
-Application.belongsTo(Opportunity, { as: "opportunity", foreignKey: "opportunityId" });
 
 export default Application;

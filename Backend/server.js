@@ -8,12 +8,12 @@ import authRoutes from "./routes/authRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import hrRoutes from "./routes/hrRoutes.js";
 
-// Models
+// Models and Associations
 import "./models/User.js";
 import "./models/ApplicantProfile.js";
 import "./models/Opportunity.js";
 import "./models/Application.js";
-
+import "./models/Associations.js";
 
 dotenv.config();
 const app = express();
