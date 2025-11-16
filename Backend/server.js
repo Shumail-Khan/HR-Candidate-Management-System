@@ -13,7 +13,7 @@ import "./models/User.js";
 import "./models/ApplicantProfile.js";
 import "./models/Opportunity.js";
 import "./models/Application.js";
-import "./models/Associations.js";
+import applyAssociations from "./models/Associations.js";
 
 dotenv.config();
 const app = express();
@@ -31,6 +31,7 @@ const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   await initDb();           // Create DB if missing + connect
+  applyAssociations();     // Apply model associations
   await sequelize.sync({ alter: true }); // Sync all models
 
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
