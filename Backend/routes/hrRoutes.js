@@ -7,10 +7,10 @@ import { createOpportunity_HR, getOpportunities_HR } from "../controllers/opport
 const router = express.Router();
 
 // HR only route to view all applications
-router.get("/applications", authenticate, authorizeRoles("hr"), viewApplications);
+router.get("/applications/all", authenticate, authorizeRoles("hr"), viewApplications);
 router.put("/applications/:id/select", authenticate, authorizeRoles("hr"), selectApplicant);
 router.put("/applications/:id/reject", authenticate, authorizeRoles("hr"), rejectApplicant);
-router.get("/applications", authenticate, authorizeRoles("hr"), getMyApplications);
+// router.get("/applications", authenticate, authorizeRoles("hr"), getMyApplications);
 
 // HR creates opportunity (auto assigned)
 router.post(

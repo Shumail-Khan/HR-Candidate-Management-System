@@ -6,9 +6,8 @@ import User from "../models/User.js";
 // ==============================
 export const createOpportunity_Admin = async (req, res) => {
   try {
-    const { title, description, hrId } = req.body;
+    const { title, description, hrId, location } = req.body;
 
-    // Validate HR exists
     const hrUser = await User.findByPk(hrId);
     if (!hrUser || hrUser.role !== "hr") {
       return res.status(400).json({ message: "Invalid HR ID" });
@@ -17,8 +16,9 @@ export const createOpportunity_Admin = async (req, res) => {
     const opportunity = await Opportunity.create({
       title,
       description,
-      createdBy: req.user.id,   // admin who created
-      assignedTo: hrId,
+      location,
+      createdBy: req.user.id,  // admin
+      assignedTo: hrId,        // hr assigned
     });
 
     res.status(201).json(opportunity);
@@ -32,13 +32,14 @@ export const createOpportunity_Admin = async (req, res) => {
 // ==============================
 export const createOpportunity_HR = async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description, location } = req.body;
 
     const opportunity = await Opportunity.create({
       title,
       description,
-      createdBy: req.user.id,   // HR who created
-      assignedTo: req.user.id,  // auto assigned
+      location,
+      createdBy: req.user.id, 
+      assignedTo: req.user.id, 
     });
 
     res.status(201).json(opportunity);
@@ -55,8 +56,8 @@ export const getOpportunities_Admin = async (req, res) => {
     const list = await Opportunity.findAll({
       where: { isDeleted: false },
       include: [
-        { model: User, as: "creator", attributes: ["id", "name", "role"] },
-        { model: User, as: "assignedHR", attributes: ["id", "name", "role"] }
+        { model: User, as: "creator", attributes: ["id", "email", "role"] },
+        { model: User, as: "assignedHR", attributes: ["id", "email", "role"] }
       ],
       order: [["createdAt", "DESC"]],
     });
@@ -84,7 +85,7 @@ export const getOpportunities_HR = async (req, res) => {
 };
 
 // ==============================
-// Soft delete Opportunity
+// Soft delete
 // ==============================
 export const deleteOpportunity = async (req, res) => {
   try {
@@ -98,7 +99,7 @@ export const deleteOpportunity = async (req, res) => {
     opportunity.isDeleted = true;
     await opportunity.save();
 
-    res.json({ message: "Opportunity deleted (soft delete)" });
+    res.json({ message: "Opportunity deleted" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -13,6 +13,16 @@ const Opportunity = sequelize.define("Opportunity", {
     defaultValue: "open"
   },
 
+  createdBy: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+
+  assignedTo: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+
   isDeleted: {
     type: DataTypes.BOOLEAN,
     defaultValue: false

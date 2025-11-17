@@ -67,3 +67,21 @@ export const removeHrManager = async (req, res) => {
         res.status(500).json({ message: "Server error deactivating HR manager" });
     }
 };
+
+export const getAllHR_Admin = async (req, res) => {
+  try {
+    const hrUsers = await User.findAll({
+      where: { role: "hr" },
+      attributes: ["id", "email", "role", "isActive"] // hide password
+    });
+
+    res.json({
+      message: "HR users fetched successfully",
+      count: hrUsers.length,
+      hr: hrUsers
+    });
+
+  } catch (err) {
+    res.status(500).json({ message: "Server error fetching HR users", error: err.message});
+  }
+};

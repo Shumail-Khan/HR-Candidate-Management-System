@@ -1,5 +1,5 @@
 import express from "express";
-import { addHrManager, removeHrManager } from "../controllers/adminController.js";
+import { addHrManager, getAllHR_Admin, removeHrManager } from "../controllers/adminController.js";
 import { authenticate } from "../middleware/auth.js";
 import { authorizeRoles } from "../middleware/role.js";
 import { createOpportunity_Admin, deleteOpportunity, getOpportunities_Admin } from "../controllers/opportunityController.js";
@@ -34,5 +34,13 @@ router.delete(
     authorizeRoles("admin"),
     deleteOpportunity
 );
+
+router.get(
+    "/get-hr",
+    authenticate,
+    authorizeRoles("admin"),
+    getAllHR_Admin
+);
+
 
 export default router;

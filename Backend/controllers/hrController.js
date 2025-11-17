@@ -1,31 +1,38 @@
 import User from "../models/User.js";
 import Application from "../models/Application.js";
 import Opportunity from "../models/Opportunity.js";
+import ApplicantProfile from "../models/ApplicantProfile.js";
 
 export const viewApplications = async (req, res) => {
-    try {
-        // Fetch all applications with applicant info and opportunity
-        const applications = await Application.findAll({
-            include: [
-                {
-                    model: User,
-                    as: "applicant",      // ensure your Application model has this association
-                    attributes: ["id", "email", "fullName", "phone"]
-                },
-                {
-                    model: Opportunity,
-                    as: "opportunity",
-                    attributes: ["id", "title", "description"]
-                }
-            ],
-            order: [["createdAt", "DESC"]],
-        });
+  try {
+    // Fetch all applications with applicant info and opportunity
+    const applications = await Application.findAll({
+      include: [
+        {
+          model: User,
+          as: "applicant",      // Application → User
+          attributes: ["id", "email"],
+          include: [
+            {
+              model: ApplicantProfile,
+              attributes: ["fullName", "phone", "address", "cvFile"]
+            }
+          ]
+        },
+        {
+          model: Opportunity,
+          as: "opportunity",
+          attributes: ["id", "title", "description"]
+        }
+      ],
+      order: [["createdAt", "DESC"]],
+    });
 
-        res.json({ applications });
-    } catch (err) {
-        console.error("HR View Applications Error:", err);
-        res.status(500).json({ message: "Server error fetching applications" });
-    }
+    res.json({ applications });
+  } catch (err) {
+    console.error("HR View Applications Error:", err.message);
+    res.status(500).json({ message: "Server error fetching applications", error: err.message });
+  }
 };
 
 export const selectApplicant = async (req, res) => {
