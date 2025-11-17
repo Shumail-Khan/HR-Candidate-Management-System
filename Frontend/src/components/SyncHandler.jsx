@@ -1,32 +1,55 @@
 import { useEffect } from "react";
-import localforage from "localforage";
-import api from "../api/axiosInstance";
+import { processQueue } from "../utils/offlineQueue";
+import {
+  createOpportunityAdmin,
+  createOpportunityHR,
+  deleteOpportunityAdmin,
+} from "../api/opportunityApi";
+import { addHR, deleteHR } from "../api/adminApi";
+import { applyToOpportunity, upsertMyProfile } from "../api/applicantApi";
+import { selectApplicant, rejectApplicant } from "../api/hrApi";
+
+// API functions for offline processing
+const apiFunctions = {
+  create: {
+    opportunityAdmin: createOpportunityAdmin,
+    opportunityHR: createOpportunityHR,
+    applyToOpportunity: applyToOpportunity,
+    addHR: addHR,
+  },
+  update: {
+    upsertMyProfile: upsertMyProfile,
+    selectApplicant: selectApplicant,
+    rejectApplicant: rejectApplicant,
+  },
+  delete: {
+    deleteOpportunityAdmin: deleteOpportunityAdmin,
+    deleteHR: deleteHR,
+  },
+};
 
 const SyncHandler = () => {
-    useEffect(() => {
-        const sync = async () => {
-            const keys = await localforage.keys();
-            for (const k of keys) {
-                if (k.startsWith("offline-op-")) {
-                    const data = await localforage.getItem(k);
-                    try {
-                        // if created by HR -> /hr/opportunity else /admin/opportunity
-                        if (data.createdByRole === "hr") {
-                            await api.post("/hr/opportunity", data);
-                        } else {
-                            await api.post("/admin/opportunity", data);
-                        }
-                        await localforage.removeItem(k);
-                    } catch {
-                        // still offline or server error
-                    }
-                }
-            }
-        };
-        window.addEventListener("online", sync);
-        return () => window.removeEventListener("online", sync);
-    }, []);
-    return null;
+  useEffect(() => {
+    const handleSync = async () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user?.token) {
+        console.log("SyncHandler: No user logged in. Skipping offline queue.");
+        return;
+      }
+
+      console.log("SyncHandler: Online - processing offline queue...");
+      await processQueue(apiFunctions);
+    };
+
+    // Try processing immediately if online
+    if (navigator.onLine) handleSync();
+
+    // Process whenever back online
+    window.addEventListener("online", handleSync);
+    return () => window.removeEventListener("online", handleSync);
+  }, []);
+
+  return null;
 };
 
 export default SyncHandler;

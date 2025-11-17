@@ -1,12 +1,28 @@
 import api from "./axiosInstance";
+import { enqueue } from "../utils/offlineQueue";
 
-// Get all applications for HR dashboard (only HR’s opportunities)
+// GET requests → leave as is
 export const getMyApplications = () => api.get("/hr/applications/all");
 
-// Select applicant (accept)
-export const selectApplicant = (id, hrRemarks = "") =>
-  api.put(`/hr/applications/${id}/select`, { hrRemarks });
+// Mutating requests → wrap for offline
+export const selectApplicant = async (id, hrRemarks = "") => {
+  try {
+    return await api.put(`/hr/applications/${id}/select`, { hrRemarks });
+  } catch (err) {
+    if (!err.response) { // network error
+      await enqueue("update", "selectApplicant", [id, hrRemarks]);
+    }
+    throw err;
+  }
+};
 
-// Reject applicant
-export const rejectApplicant = (id, hrRemarks = "") =>
-  api.put(`/hr/applications/${id}/reject`, { hrRemarks });
+export const rejectApplicant = async (id, hrRemarks = "") => {
+  try {
+    return await api.put(`/hr/applications/${id}/reject`, { hrRemarks });
+  } catch (err) {
+    if (!err.response) {
+      await enqueue("update", "rejectApplicant", [id, hrRemarks]);
+    }
+    throw err;
+  }
+};
