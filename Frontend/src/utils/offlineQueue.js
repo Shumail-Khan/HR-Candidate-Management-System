@@ -16,7 +16,6 @@ export const enqueue = async (type, entity, args) => {
 // Process the queue when back online
 export const processQueue = async (apiFunctions) => {
   const queue = await getQueue();
-  console.log(queue);
   if (!queue.length) return;
 
   const failedActions = []; // Will hold items that failed to process
